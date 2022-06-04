@@ -46,32 +46,25 @@ namespace Nest_Backend.Areas.Manage.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> Update(Categories category,int id)
+
+        public IActionResult Update(int id)
         {
+            Categories categories = _context.Categories.FirstOrDefault(x => x.Id == id);
+            if (categories == null) return NotFound();
 
-            var categories = await _context.Categories.FindAsync(id);
-            var categoryy = new Categories()
-            {
-                Id = categories.Id,
-                Name = categories.Name,
-                Logo = categories.Logo,
-            };
-            return View(categoryy);
-
-            var categoriess = await _context.Categories.FindAsync(id);
-            categoriess.Name = category.Name;
-            categoriess.Logo = category.Logo;
-            _context.Update(categories);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View(categories);
         }
+        [HttpPost]
+        public IActionResult Update(Categories categories)
+        {
+            Categories c = _context.Categories.FirstOrDefault(x => x.Id == categories.Id);
+            if (c == null) return NotFound();
 
-        //[HttpPost]
-        //public IActionResult Update()
-        //{
-        //    return View();
-
-        //}
+            c.Name = categories.Name;
+            c.Logo = categories.Logo;
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
+
 }
